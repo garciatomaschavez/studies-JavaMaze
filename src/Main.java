@@ -5,7 +5,7 @@ public class Main
         MenuScreens screen = new MenuScreens();
         Map map = new Map();
 
-        for (int i=0; i<20; i++)
+        for (int i=1; i < (map.options.width * map.options.length); i++)
         {
             map.logic.updateMapOptions(map);
             map.logic.updateTile(map, map.logic.findCandidate(map, map.logic.shortestOptionRange(map)));

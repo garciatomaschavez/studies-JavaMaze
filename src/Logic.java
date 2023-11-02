@@ -215,10 +215,10 @@ public class Logic
 
         int randOption = (int) (Math.random() * tileOptions.length);
 
-        map.worldMapValue[y][x] = randOption;
+        map.worldMapValue[y][x] = tileOptions[randOption];
 
         // también vamos a poner que sus opciones de valores son solo 1, la que tiene asignada
         map.worldMapOptions[y][x] = Arrays.copyOf(map.worldMapOptions[y][x], 1);
-        map.worldMapOptions[y][x][0] = randOption;
+        map.worldMapOptions[y][x][0] = tileOptions[randOption];
     }
 }
