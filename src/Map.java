@@ -99,11 +99,11 @@ public class Map
     // actualiza el worldMapVisual en base a
     public void updateMap()
     {
-        for(int i=0; i < this.worldMapVisual.length; i++)
+        for(int y=0; y < this.worldMapVisual.length; y++)
         {
-            for(int j= 0; j < this.worldMapVisual[i].length; j++)
+            for(int x= 0; x < this.worldMapVisual[y].length; x++)
             {
-                worldMapVisual[i][j] = this.logic.obtainTileset(worldMapValue[i][j]);
+                worldMapVisual[y][x] = this.logic.obtainTileset(worldMapValue[y][x]);
                 // this.worldMapVisual[i][j] = DEBUG_calcRandomChar();
             }
         }
@@ -147,6 +147,6 @@ public class Map
     // devuelve numero aleatorio entre 1 y 12 (los valores numéricos de los tile)
     public int calcRandom()
     {
-        return 1 + (int)(Math.random() * ((12 - 1) + 1));
+        return 1 + (int) (Math.random() * ((12 - 1) + 1));
     }
 }
