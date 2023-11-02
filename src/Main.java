@@ -5,9 +5,9 @@ public class Main
         MenuScreens screen = new MenuScreens();
         Map map = new Map();
 
-        map.calcInitial();
         map.updateMap();
         map.showMap();
+
 
         // screen.mainMenu();
     }

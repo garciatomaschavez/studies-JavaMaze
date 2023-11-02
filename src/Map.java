@@ -2,23 +2,30 @@ import java.util.Arrays;
 
 public class Map
 {
+    // obtejo Options que guarda las opciones que se usan para la generacion
     Options options = new Options();
 
     // almacena el CARACTER ascii a mostrar en cada field
-    private String[][] worldMapVisual;
+    String[][] worldMapVisual;
 
     // almacena el VALOR al que equivale el caracter a mostrar en cada field
-    private int[][] worldMapValue;
+    int[][] worldMapValue;
 
     // almacena los POSIBLES valores que puede tener cada field
-    private int[][][] worldMapOptions;
+    int[][][] worldMapOptions;
 
     // booleano que marca si se ha hecho el primer paso de la generación (asignar valor a 1 casilla aleatoria)
-    private boolean generated = false;
+    boolean generated = false;
+
+    // objeto Logic que realiza los calculos y procedimientos en la generacion
+    Logic logic;
 
     // constructor
     public Map()
     {
+        // creamos el objeto Logic
+        logic = new Logic();
+
         // los creamos con una longitud [y][x] iguales a las propiedades LENGTH y WIDTH guardadas en la clase options
         this.worldMapVisual = new String[options.length][options.width];
 
@@ -30,39 +37,40 @@ public class Map
 
         // recorro el worldMapOptions y a cada array en X le meto los valores del 1 al 12, que son (al principio), los
         // posibles valores hasta que se le asigne uno a la primera casilla aleatoria
-        for (int y=0; y < worldMapOptions.length; y++)
+        for (int y = 0; y < worldMapOptions.length; y++)
         {
-            for (int x=0; x < worldMapOptions[y].length; x++)
+            for (int x = 0; x < worldMapOptions[y].length; x++)
             {
                 int cont = 1;
-                for (int z=0; z < worldMapOptions[y][x].length; z++)
+                for (int z = 0; z < worldMapOptions[y][x].length; z++)
                 {
                     worldMapOptions[y][x][z] = cont;
                     cont++;
                 }
             }
         }
-    }
 
-    // escoge la primera casilla aleatoria de la que partirá toda la generación
-    public void calcInitial()
-    {
+        // escoge la primera casilla aleatoria de la que partirá toda la generación
         // generamos coordenada Y aleatoria
-        int randLength = (int) (Math.random() * (this.options.length));
+        int randY = (int) (Math.random() * (this.options.length));
         // generamos coordenada X aleatoria
-        int randWidth = (int) (Math.random() * (this.options.width));
+        int randX = (int) (Math.random() * (this.options.width));
 
-        int randValue = 1 + (int)(Math.random() * ((12 - 1) + 1));
+        int randValue = 1 + (int) (Math.random() * ((12 - 1) + 1));
         // a ese field aleatorio le vamos a asignar un valor aleatorio (es decir, ahora va a ser representado de x manera)
-        worldMapValue[randLength][randWidth] = randValue;
+        worldMapValue[randY][randX] = randValue;
 
         // también vamos a poner que sus opciones de valores son solo 1, la que tiene asignada
-        worldMapOptions[randLength][randWidth] = Arrays.copyOf(worldMapOptions[randLength][randWidth], 1);
-        worldMapOptions[randLength][randWidth][0] = randValue;
+        worldMapOptions[randY][randX] = Arrays.copyOf(worldMapOptions[randY][randX], 1);
+        worldMapOptions[randY][randX][0] = randValue;
 
         // marcamos que ahora el mapa es representable porque ya hemos empezado el proceso de generación
         this.generated = true;
+
+        // establecemos las nuevas posibles opciones para los alrededores de la primera generación
+        this.logic.checkSurroundings(randY, randX, this);
     }
+
 
     // dibuja el mapa en pantalla
     public void showMap()
@@ -76,71 +84,26 @@ public class Map
                 for(int x = 0; x < this.worldMapValue[y].length; x++)
                 {
                     // realiza la traducción entre el valor numérico asignado en worldMapValue al tile asignado
-                    worldMapVisual[y][x] = obtainTileset(worldMapValue[y][x]);
+                    worldMapVisual[y][x] = this.logic.obtainTileset(worldMapValue[y][x]);
 
+                    // imprime el valor asignado a cada casilla
                     System.out.print(worldMapVisual[y][x]);
                 }
+                // salto de linea
                 System.out.print("\n");
             }
         }
     }
 
 
-    public String obtainTileset(int tileValue)
-    {
-        switch (tileValue)
-        {
-            case 1:
-                return "╔";
-            case 2:
-                return "╗";
-            case 3:
-                return "╚";
-            case 4:
-                return "╝";
-            case 5:
-                return "╠";
-            case 6:
-                return "╣";
-            case 7:
-                return "╦";
-            case 8:
-                return "╩";
-            case 9:
-                return "╬";
-            case 10:
-                return "║";
-            case 11:
-                return "═";
-            case 12:
-                return " ";
-            default:
-                return "?";
-        }
-    }
-
-
-    // check los alrededores de la casilla con las coordenadas indicadas en los parametros
-    public int checkSurroundings(int y, int x)
-    {
-
-    }
-
-    /*
-
-    public String characterLogic(String[] previousValue){
-
-    }
-    */
-
+    // actualiza el worldMapVisual en base a
     public void updateMap()
     {
-        int rand;
         for(int i=0; i < this.worldMapVisual.length; i++)
         {
             for(int j= 0; j < this.worldMapVisual[i].length; j++)
             {
-                worldMapVisual[i][j] = obtainTileset(worldMapValue[i][j]);
+                worldMapVisual[i][j] = this.logic.obtainTileset(worldMapValue[i][j]);
                 // this.worldMapVisual[i][j] = DEBUG_calcRandomChar();
             }
         }
@@ -181,9 +144,9 @@ public class Map
         }
     }
 
+    // devuelve numero aleatorio entre 1 y 12 (los valores numéricos de los tile)
     public int calcRandom()
     {
         return 1 + (int)(Math.random() * ((12 - 1) + 1));
     }
-
 }
